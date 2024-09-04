@@ -1,0 +1,66 @@
+//- h1 Proudcts Page 
+//- <div>
+//-     each product, index in products
+//-         <h3>#{product.title}</h3>
+//-         <p>#{product.cat}</p>
+//- </div>
+
+
+extends layout
+
+block content
+  h1 Products Page
+
+
+
+  //- Search Bar
+  form#searchForm(method="GET", action="/products")
+    .form-group
+      label(for="search") Search Products
+      input#search.form-control(type="text", name="search", placeholder="Enter product title...")
+
+  //- Create Product Button
+  a.btn.btn-primary(href="/products/new") Create Product
+
+  //- Check if products exist
+  if products.length === 0
+    .alert.alert-warning
+      | No products added yet!
+  else
+    table.table.table-striped
+      thead
+        tr
+          th Title
+          th Description 
+          th Stock 
+          th Expired 
+      tbody
+        each product in products
+          tr
+            td #{product.title}
+            td #{product.description}
+            td #{product.stock}
+            td #{product.expired}
+
+  script.
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      const searchQuery = document.getElementById('search').value.toLowerCase();
+      const rows = document.querySelectorAll('tbody tr');
+      let found = false;
+
+      rows.forEach(row => {
+        const title = row.children[0].textContent.toLowerCase();
+        if (title.includes(searchQuery)) {
+          row.style.display = '';
+          found = true;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      if (!found) {
+        alert('No products found matching your search.');
+      }
+
+      e.preventDefault();
+    });
