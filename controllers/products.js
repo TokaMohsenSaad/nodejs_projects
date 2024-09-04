@@ -33,8 +33,46 @@ const addProductController = (req, res) => {
   res.redirect("/products");
 };
 
+const editProductController = (req, res) => {
+  const productId = parseInt(req.params.id);
+  const product = productsModule.find((p) => p.id === productId);
+  res.status(200).render("editProduct", { product });
+};
+
+const updateProductController = (req, res) => {
+  const productId = parseInt(req.params.id);
+  const { title, description, stock, expired } = req.body;
+
+  const productIndex = productsModule.findIndex((p) => p.id === productId);
+  if (productIndex > -1) {
+    productsModule[productIndex] = {
+      ...productsModule[productIndex],
+      title: title,
+      description: description,
+      stock: stock,
+      expired: expired,
+    };
+  }
+
+  res.redirect("/products");
+};
+
+const deleteProductController = (req, res) => {
+  const productId = parseInt(req.params.id);
+  const productIndex = productsModule.findIndex((p) => p.id === productId);
+
+  if (productIndex > -1) {
+    productsModule.splice(productIndex, 1);
+  }
+
+  res.status(200).send();
+};
+
 module.exports = {
   indexController,
   createProductController,
   addProductController,
+  editProductController,
+  updateProductController,
+  deleteProductController,
 };
